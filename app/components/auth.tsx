@@ -2,6 +2,7 @@
 import { signIn, signOut } from "@/lib/auth";
 import { Session } from "next-auth";
 import { WithAuth } from "../hoc/with-auth";
+import { Avatar } from "./avatar";
 
 function Auth({ session }: { session: Session | null }) {
   if (!session?.user) {
@@ -20,7 +21,7 @@ function Auth({ session }: { session: Session | null }) {
   return (
     <div>
       {session.user.image ? (
-        <img src={session.user.image} alt="User Avatar" />
+        <Avatar image={session.user.image} userId={session.user?.id || ""} />
       ) : (
         <div>No avatar available</div>
       )}

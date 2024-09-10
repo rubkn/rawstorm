@@ -1,4 +1,8 @@
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+import {
+  DynamoDBClient,
+  PutItemCommand,
+  QueryCommand,
+} from "@aws-sdk/client-dynamodb";
 
 const dynamoDB = new DynamoDBClient({
   region: process.env.AWS_REGION,
@@ -24,4 +28,17 @@ export async function updateUserPhotoInDB(
   };
 
   return dynamoDB.send(new PutItemCommand(params));
+}
+
+export async function getUserPhotos(userId: string) {
+  const params = {
+    TableName: process.env.DYNAMODB_PHOTOS_TABLE_NAME,
+    IndexName: "GSI1",
+    KeyConditionExpression: "userId = :userId",
+    ExpressionAttributeValues: {
+      ":userId": { S: userId },
+    },
+  };
+
+  return dynamoDB.send(new QueryCommand(params));
 }
