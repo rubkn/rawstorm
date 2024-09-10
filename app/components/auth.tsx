@@ -1,8 +1,9 @@
-import { signIn, signOut, auth } from "@/lib/auth";
+/* eslint-disable @next/next/no-img-element */
+import { signIn, signOut } from "@/lib/auth";
+import { Session } from "next-auth";
+import { WithAuth } from "../hoc/with-auth";
 
-export default async function Auth() {
-  const session = await auth(); // Fetch the session on the server side
-
+function Auth({ session }: { session: Session | null }) {
   if (!session?.user) {
     return (
       <form
@@ -18,7 +19,11 @@ export default async function Auth() {
 
   return (
     <div>
-      <img src={session.user.image} alt="User Avatar" />
+      {session.user.image ? (
+        <img src={session.user.image} alt="User Avatar" />
+      ) : (
+        <div>No avatar available</div>
+      )}
       <form
         action={async () => {
           "use server";
@@ -30,3 +35,5 @@ export default async function Auth() {
     </div>
   );
 }
+
+export default WithAuth(Auth);
