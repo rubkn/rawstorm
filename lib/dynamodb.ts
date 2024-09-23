@@ -42,3 +42,18 @@ export async function getUserPhotos(userId: string) {
 
   return dynamoDB.send(new QueryCommand(params));
 }
+
+export async function getUserProfile(userId: string) {
+  const params = {
+    TableName: process.env.DYNAMODB_USERS_TABLE_NAME,
+    KeyConditionExpression: "pk = :pk and begins_with(sk, :skPrefix)",
+    ExpressionAttributeValues: {
+      ":pk": { S: `USER#${userId}` },
+      ":skPrefix": { S: "USER#" },
+    },
+  };
+
+  return dynamoDB.send(new QueryCommand(params));
+  /* const result = await dynamoDB.send(new QueryCommand(params));
+  return result.Items?.[0] || null; */
+}

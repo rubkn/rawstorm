@@ -1,11 +1,6 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
-
-type File = {
-  buffer: Buffer;
-  originalFilename: string;
-  mimetype: string;
-};
+import { File } from "./types";
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
