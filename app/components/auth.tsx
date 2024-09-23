@@ -1,39 +1,25 @@
-/* eslint-disable @next/next/no-img-element */
-import { signIn, signOut } from "@/lib/auth";
+import { signIn } from "next-auth/react";
 import { Session } from "next-auth";
-import { WithAuth } from "../hoc/with-auth";
-import { Avatar } from "./avatar";
+import { WithAuth } from "@/app/hoc/with-auth";
+import { UserAvatarDropdown } from "./user-avatar-dropdown";
+import { Button } from "@/components/ui/button";
 
 function Auth({ session }: { session: Session | null }) {
-  if (!session?.user) {
-    return (
-      <form
-        action={async () => {
-          "use server";
-          await signIn("google");
-        }}
-      >
-        <button type="submit">Sign in with Google</button>
-      </form>
-    );
-  }
-
   return (
-    <div>
-      {session.user.image ? (
-        <Avatar image={session.user.image} userId={session.user?.id || ""} />
+    <>
+      {session?.user ? (
+        <UserAvatarDropdown session={session} />
       ) : (
-        <div>No avatar available</div>
+        <form
+          action={async () => {
+            "use server";
+            await signIn("google");
+          }}
+        >
+          <Button type="submit">Sign in with Google</Button>
+        </form>
       )}
-      <form
-        action={async () => {
-          "use server";
-          await signOut();
-        }}
-      >
-        <button type="submit">Sign out</button>
-      </form>
-    </div>
+    </>
   );
 }
 

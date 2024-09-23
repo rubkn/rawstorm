@@ -31,4 +31,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     indexPartitionKey: "GSI1PK",
     indexSortKey: "GSI1SK",
   }),
+  pages: {
+    signIn: "/signup",
+  },
 });
