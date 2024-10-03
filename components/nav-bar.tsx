@@ -1,30 +1,58 @@
-import Auth from "@/app/components/auth";
-import { ModeToggle } from "./mode-toggle";
+"use client";
 
-function Nav() {
+import Link from "next/link";
+import { ModeToggle } from "./mode-toggle";
+import { Button } from "./ui/button";
+
+export function Logo() {
   return (
-    <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#EEEEEE] px-10 py-3">
-      <div className="flex items-center gap-4 text-black">
-        <div className="size-4">
-          <svg
-            viewBox="0 0 48 48"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z"
-              fill="currentColor"
-            ></path>
-          </svg>
-        </div>
-        <h2 className="text-black text-lg font-bold leading-tight tracking-[-0.015em]">
-          rawstorm
-        </h2>
+    <Link href="/">
+      <div className="flex items-center space-x-2">
+        <div className="h-8 w-8 rounded-full border-2 border-primary"></div>
+        <span className="text-xl font-bold">Rawstorm</span>
       </div>
-      <ModeToggle />
-      <Auth />
-    </header>
+    </Link>
   );
 }
 
-export default Nav;
+export default function Nav() {
+  const smoothScroll = (id: string) => {
+    const section = document.getElementById(id);
+    section?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  return (
+    <header className="px-4 lg:px-6 h-14 flex items-center">
+      <Logo />
+      <nav className="ml-auto pl-2 flex gap-4">
+        <Button
+          variant="link"
+          className="p-0"
+          onClick={() => {
+            smoothScroll("features");
+          }}
+        >
+          Features
+        </Button>
+        <Button
+          variant="link"
+          className="p-0"
+          onClick={() => {
+            smoothScroll("gallery");
+          }}
+        >
+          Gallery
+        </Button>
+        <Button variant="link" className="p-0">
+          About
+        </Button>
+        <Link href={"/login"}>
+          <Button variant="link" className="p-0">
+            Login
+          </Button>
+        </Link>
+        <ModeToggle />
+      </nav>
+    </header>
+  );
+}
