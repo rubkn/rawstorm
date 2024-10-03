@@ -1,9 +1,8 @@
 "use client";
 
-import { Session } from "next-auth";
 import { useState } from "react";
 
-function Upload({ session }: { session: Session | null }) {
+function Upload() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [messages, setMessages] = useState<{
@@ -19,13 +18,10 @@ function Upload({ session }: { session: Session | null }) {
   };
 
   const handleUpload = async () => {
-    if (!selectedFiles.length || !session?.user?.id) {
+    if (!selectedFiles.length) {
       setMessages((prev) => ({
         ...prev,
-        error: [
-          ...prev.error,
-          "Please select files and ensure you're logged in.",
-        ],
+        error: [...prev.error, "Please select at least 1 file."],
       }));
       return;
     }
@@ -38,7 +34,6 @@ function Upload({ session }: { session: Session | null }) {
       selectedFiles.map(async (file) => {
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("userId", session?.user?.id as string);
 
         try {
           const res = await fetch("/api/upload-photo", {
@@ -85,8 +80,6 @@ function Upload({ session }: { session: Session | null }) {
     setUploading(false);
     setSelectedFiles([]);
   };
-
-  if (!session || !session.user) return null;
 
   return (
     <div>

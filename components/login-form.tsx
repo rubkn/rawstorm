@@ -1,76 +1,73 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { signIn } from "@/lib/auth";
 import { GithubIcon, MailIcon } from "lucide-react";
 import Link from "next/link";
 
-export default function Authentication() {
+export default function Login() {
   return (
     <div className="w-full max-w-md space-y-8">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-white">Welcome back!</h1>
-        <p className="text-neutral-400">
-          Log in to continue your journey with our vibrant photography
-          community.
+        <h1 className="text-3xl font-bold">Welcome back!</h1>
+        <p className="text-zinc-400">
+          Pick up where you left off and dive back into our vibrant photography
+          community. Log in to continue sharing your creativity and discovering
+          new inspirations.
         </p>
       </div>
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-white">
-            Email
-          </Label>
+          <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             type="email"
             placeholder="name@example.com"
             required
-            className="bg-neutral-900 border-neutral-800 placeholder-neutral-400"
           />
         </div>
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password" className="text-white">
-              Password
-            </Label>
+          <div className="flex items-center">
+            <Label htmlFor="password">Password</Label>
             <Link
               href="/forgot-password"
-              className="text-sm text-neutral-400 hover:text-white"
+              className="ml-auto inline-block text-sm underline"
             >
               Forgot your password?
             </Link>
           </div>
-          <Input
-            id="password"
-            type="password"
-            required
-            className="bg-neutral-900 border-neutral-800 placeholder-neutral-400"
-          />
+          <Input id="password" type="password" required />
         </div>
 
-        <Button
-          type="submit"
-          className="w-full bg-white text-black hover:bg-neutral-200"
-        >
+        <Button type="submit" className="w-full" variant="default">
           Login
         </Button>
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-neutral-700"></span>
+            <span className="w-full border-t border-zinc-700"></span>
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-black px-2 text-neutral-400">
+            <span className="bg-[#0a0a0a] light:bg-white px-2 text-zinc-400">
               Or continue with
             </span>
           </div>
         </div>
 
         <div className="flex gap-4">
-          <Button className="w-full">
-            <MailIcon className="mr-2 h-4 w-4" />
-            Google
-          </Button>
-          <Button className="w-full">
+          <form
+            className="w-full"
+            action={async () => {
+              "use server";
+              await signIn("google");
+            }}
+          >
+            <Button className="w-full" variant="outline">
+              <MailIcon className="mr-2 h-4 w-4" />
+              Google
+            </Button>
+          </form>
+          <Button className="w-full" variant="outline">
             <GithubIcon className="mr-2 h-4 w-4" />
             GitHub
           </Button>

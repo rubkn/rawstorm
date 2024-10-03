@@ -1,35 +1,33 @@
-import NextAuth from "next-auth";
+import NextAuth, { DefaultSession } from "next-auth";
 import Google from "next-auth/providers/google";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { db } from "@/drizzle/db";
+import {
+  accounts,
+  sessions,
+  users,
+  verificationTokens,
+} from "@/drizzle/schema";
 
-import { DynamoDB, DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBAdapter } from "@auth/dynamodb-adapter";
+declare module "next-auth" {
+  interface User {
+    username?: string | null;
+  }
 
-const config: DynamoDBClientConfig = {
-  credentials: {
-    accessKeyId: process.env.AWS_DYNAMODB_ACCESS_KEY_ID as string,
-    secretAccessKey: process.env.AWS_DYNAMODB_SECRET_ACCESS_KEY as string,
-  },
-  region: process.env.AUTH_DYNAMODB_REGION,
-};
-
-const client = DynamoDBDocument.from(new DynamoDB(config), {
-  marshallOptions: {
-    convertEmptyValues: true,
-    removeUndefinedValues: true,
-    convertClassInstanceToMap: true,
-  },
-});
+  interface Session {
+    user: {
+      username?: string | null;
+    } & DefaultSession["user"];
+  }
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Google],
-  adapter: DynamoDBAdapter(client, {
-    tableName: process.env.DYNAMODB_USERS_TABLE_NAME,
-    partitionKey: "pk",
-    sortKey: "sk",
-    indexName: "GSI1",
-    indexPartitionKey: "GSI1PK",
-    indexSortKey: "GSI1SK",
+  adapter: DrizzleAdapter(db, {
+    usersTable: users,
+    accountsTable: accounts,
+    sessionsTable: sessions,
+    verificationTokensTable: verificationTokens,
   }),
   pages: {
     signIn: "/signup",

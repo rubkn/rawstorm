@@ -1,6 +1,15 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { v4 as uuidv4 } from "uuid";
-import { File } from "./types";
+import {
+  S3Client,
+  PutObjectCommand,
+  ListObjectsV2Command,
+} from "@aws-sdk/client-s3";
+import crypto from "crypto";
+
+type File = {
+  buffer: Buffer;
+  originalFilename: string;
+  mimetype: string;
+};
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
@@ -10,9 +19,10 @@ const s3 = new S3Client({
   },
 });
 
-export async function uploadToS3(file: File, userId: string) {
-  const photoId = uuidv4();
-  const uniqueFileName = `${userId}/${photoId}-${file.originalFilename}`;
+export async function uploadToS3(file: File, user: string) {
+  const bucket = process.env.S3_BUCKET_NAME;
+  const photoId = crypto.randomUUID();
+  const uniqueFileName = `${user}/${photoId}-${file.originalFilename}`;
 
   const uploadParams = {
     Bucket: process.env.S3_BUCKET_NAME!,
@@ -24,7 +34,46 @@ export async function uploadToS3(file: File, userId: string) {
   await s3.send(new PutObjectCommand(uploadParams));
 
   return {
-    s3Url: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${uniqueFileName}`,
+    s3Url: `https://${bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${uniqueFileName}`,
     photoId,
+  };
+}
+
+export async function spotlightPhoto() {
+  const bucket = process.env.S3_BUCKET_NAME;
+
+  const listParams = {
+    Bucket: bucket,
+    Delimiter: "/",
+  };
+
+  const foldersList = await s3.send(new ListObjectsV2Command(listParams));
+  const folders =
+    foldersList.CommonPrefixes?.map((folder) => folder.Prefix) || [];
+
+  if (folders.length === 0) {
+    throw new Error("No folders found in the bucket.");
+  }
+
+  const randomFolder = folders[Math.floor(Math.random() * folders.length)];
+  const folderParams = {
+    Bucket: bucket,
+    Prefix: randomFolder,
+  };
+
+  const folderResponse = await s3.send(new ListObjectsV2Command(folderParams));
+  const items = folderResponse.Contents?.map((content) => content.Key) || [];
+
+  if (items.length === 0) {
+    throw new Error("No photos found in the selected folder.");
+  }
+
+  const randomItem = items[Math.floor(Math.random() * items.length)];
+  const userId = randomItem?.split("/")[0];
+  const photoUrl = `https://${bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${randomItem}`;
+
+  return {
+    photoUrl,
+    userId,
   };
 }
