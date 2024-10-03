@@ -28,7 +28,7 @@ export default async function UserProfilePage({
           <p>No photos uploaded yet.</p>
         ) : (
           photos.map((photo) => (
-            <img key={photo.id} src={photo.s3Url} alt="User photo" />
+            <img key={photo.id} src={photo.s3Url!} alt="User photo" />
           ))
         )}
       </div>
