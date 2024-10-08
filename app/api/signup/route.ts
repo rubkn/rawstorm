@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import bcrypt from "bcryptjs";
+import { eq } from "drizzle-orm";
 
 export async function POST(request: Request) {
   try {
-    const { username, email, fullName, password } = await request.json();
+    const { username, email, password } = await request.json();
 
     const existingUser = await db
       .select()
@@ -24,7 +25,6 @@ export async function POST(request: Request) {
     await db.insert(users).values({
       username,
       email,
-      fullName,
       password: hashedPassword,
     });
 
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating user:", error);
     return NextResponse.json(
-      { message: "Failed to create user", error: error.message },
+      { message: "Failed to create user.", error },
       { status: 500 }
     );
   }
