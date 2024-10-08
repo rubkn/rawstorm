@@ -1,17 +1,15 @@
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/logo";
-import { Upload } from "lucide-react";
+//import UploadButton from "./upload";
+import Upload from "./upload-button";
 
-export default function Nav() {
+export default function ProfileNav() {
   return (
     <header className="flex items-center justify-between p-6">
       <Logo />
       <div className="flex items-center space-x-4">
-        <Button variant="outline">
-          <Upload className="mr-2 h-4 w-4" />
-          Upload Photos
-        </Button>
-        {/* <Logout /> */}
+        <Upload />
+        <Button variant="ghost">Logout</Button>
       </div>
     </header>
   );

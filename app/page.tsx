@@ -11,7 +11,7 @@ export default async function LandingPage() {
   return (
     <div className="grid min-h-screen w-full">
       <section className="flex flex-col">
-        <header className="flex items-center justify-center p-6 space-x-2">
+        <header className="flex items-center justify-between p-6 space-x-6">
           <Logo />
           <AuthAction />
         </header>

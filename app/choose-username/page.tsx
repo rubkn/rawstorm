@@ -1,14 +1,12 @@
 import { redirect } from "next/navigation";
 import ChooseUsernameForm from "@/components/choose-username-form";
 import { auth } from "@/lib/auth";
-import { findProfileById } from "@/db/queries";
+//import { findProfileById } from "@/db/queries";
 import Logo from "@/components/logo";
 
 export default async function ChooseUsernamePage() {
   const session = await auth();
-  console.log("ChooseUsernamePage-session", session);
-  const user = await findProfileById(session?.user.id as string);
-  console.log("ChooseUsernamePage-user", user);
+  //const user = await findProfileById(session?.user.id as string);
 
   //if (!session) redirect("/");
   if (session?.user?.username) redirect(`/${session.user.username}`);

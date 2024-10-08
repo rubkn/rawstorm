@@ -7,7 +7,6 @@ import { findProfileById } from "@/db/queries";
 export default async function AuthAction() {
   const session = await auth();
   const user = await findProfileById(session?.user.id as string);
-  //console.log("AuthAction-user", user);
 
   {
     /* <form
