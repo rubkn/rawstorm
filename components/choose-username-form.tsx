@@ -4,11 +4,18 @@ import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Session } from "next-auth";
 
-export default function ChooseUsername({ userId }: { userId: string }) {
+export default function ChooseUsernameForm({
+  session,
+}: {
+  session: Session | null;
+}) {
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+
+  const userId = session?.user.id;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -22,7 +29,7 @@ export default function ChooseUsername({ userId }: { userId: string }) {
     });
 
     if (res.ok) {
-      router.push("/");
+      router.push(`/${username}`);
     } else {
       const data = await res.json();
       setError(data.message || "Failed to set username");

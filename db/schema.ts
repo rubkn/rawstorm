@@ -13,10 +13,12 @@ export const users = pgTable("user", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name"),
-  username: text("username").unique(),
+  username: text("username"),
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
+  password: text("password"),
   image: text("image"),
+  createdAt: timestamp("createdAt").defaultNow(),
 });
 
 export const accounts = pgTable(
@@ -91,4 +93,22 @@ export const photos = pgTable("photo", {
   userId: text("userId").references(() => users.id),
   s3Url: text("s3Url"),
   createdAt: timestamp("createdAt").defaultNow(),
+});
+
+export const profiles = pgTable("profile", {
+  userId: text("userId")
+    .primaryKey()
+    .references(() => users.id, {
+      onDelete: "cascade",
+    }),
+  username: text("username").unique(),
+  age: integer("age"),
+  bio: text("bio"),
+  profession: text("profession"),
+  location: text("location"),
+  website: text("website"),
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt")
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });

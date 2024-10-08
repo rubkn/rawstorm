@@ -1,30 +1,27 @@
 import { redirect } from "next/navigation";
-import ChooseUsername from "@/components/choose-username-form"; // Client Component
+import ChooseUsernameForm from "@/components/choose-username-form";
 import { auth } from "@/lib/auth";
+import { findProfileById } from "@/db/queries";
+import Logo from "@/components/logo";
 
 export default async function ChooseUsernamePage() {
   const session = await auth();
+  console.log("ChooseUsernamePage-session", session);
+  const user = await findProfileById(session?.user.id as string);
+  console.log("ChooseUsernamePage-user", user);
 
-  if (!session?.user) {
-    redirect("/login");
-  }
-
-  if (session.user.username) {
-    redirect("/");
-  }
+  //if (!session) redirect("/");
+  if (session?.user?.username) redirect(`/${session.user.username}`);
 
   return (
     <div className="grid min-h-screen w-full grid-cols-1">
       <div className="flex flex-col">
         <header className="flex items-center justify-between p-6">
-          <div className="flex items-center space-x-2">
-            <div className="h-8 w-8 rounded-full border-2 border-primary"></div>
-            <span className="text-xl font-bold">Rawstorm</span>
-          </div>
+          <Logo />
         </header>
 
         <main className="flex flex-1 items-center justify-center p-6">
-          <ChooseUsername userId={session.user.id!} />
+          <ChooseUsernameForm session={session} />
         </main>
       </div>
     </div>

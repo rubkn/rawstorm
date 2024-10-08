@@ -1,38 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/drizzle/db";
-import { users } from "@/drizzle/schema";
+import { db } from "@/db";
+import { profiles } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function POST(request: NextRequest) {
   const { username, userId } = await request.json();
 
-  if (!username || !userId) {
+  if (!userId) {
     return NextResponse.json(
-      { message: "Username and User ID are required" },
+      { message: "User ID is required." },
       { status: 400 }
     );
   }
 
   try {
-    const sameUsername = await db
+    const existingProfile = await db
       .select()
-      .from(users)
-      .where(eq(users.username, username));
+      .from(profiles)
+      .where(eq(profiles.userId, userId));
 
-    if (sameUsername.length > 0) {
-      return NextResponse.json(
-        { message: "Username is already taken" },
-        { status: 400 }
-      );
+    if (existingProfile.length > 0) {
+      await db
+        .update(profiles)
+        .set({ username: username })
+        .where(eq(profiles.userId, userId));
+
+      return NextResponse.json({ message: "Username updated successfully." });
+    } else {
+      await db.insert(profiles).values({
+        userId: userId,
+        username: username,
+      });
+
+      return NextResponse.json({ message: "Profile created successfully." });
     }
-
-    await db.update(users).set({ username }).where(eq(users.id, userId));
-
-    return NextResponse.json({ message: "Username set successfully" });
   } catch (error) {
-    console.error("Error updating username.", error);
+    console.error("Error creating or updating profile.", error);
     return NextResponse.json(
-      { message: "Failed to set username" },
+      { message: "Failed to create or update profile." },
       { status: 500 }
     );
   }

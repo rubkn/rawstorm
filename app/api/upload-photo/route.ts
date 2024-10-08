@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { uploadToS3 } from "@/lib/s3";
 import { NextRequest, NextResponse } from "next/server";
-import { findUserById, insertUserPhoto } from "@/drizzle/db";
+import { findUserById, insertUserPhoto } from "@/db/queries";
 
 export async function POST(req: NextRequest) {
   const session = await auth();

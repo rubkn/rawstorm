@@ -1,25 +1,28 @@
-import { findUserByUsername, findUserPhotos } from "@/drizzle/db";
-import { notFound } from "next/navigation";
+import Nav from "@/components/nav-bar";
+import { findProfileByUsername, findUserPhotos } from "@/db/queries";
+import { auth } from "@/lib/auth";
 
 export default async function UserProfilePage({
   params: { username },
 }: {
   params: { username: string };
 }) {
-  const user = await findUserByUsername(username);
+  const session = await auth();
+  //console.log("UserProfilePage-session", session);
+  const profile = await findProfileByUsername(username);
+  //console.log("UserProfilePage-profile", profile);
 
-  if (!user) {
-    notFound();
-  }
-
-  const photos = await findUserPhotos(user.id);
+  const photos = await findUserPhotos(
+    session?.user.id || profile?.username || ""
+  );
 
   return (
     <div>
-      <h1>{user.name || user.username}</h1>
+      <Nav />
+      <h1>{username}</h1>
       <img
-        src={user.image || "/default-avatar.png"}
-        alt={`${user.username}'s profile picture`}
+        src={session?.user.image || "/default-avatar.png"}
+        alt={`${session?.user.name}'s profile picture`}
       />
 
       <h2>Photos</h2>
