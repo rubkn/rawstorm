@@ -91,6 +91,7 @@ export const authenticators = pgTable(
 export const photos = pgTable("photo", {
   id: text("id").primaryKey(),
   userId: text("userId").references(() => users.id),
+  uploadedBy: text("username"),
   s3Url: text("s3Url"),
   createdAt: timestamp("createdAt").defaultNow(),
 });
@@ -112,3 +113,39 @@ export const profiles = pgTable("profile", {
     .defaultNow()
     .$onUpdate(() => new Date()),
 });
+
+export const followers = pgTable(
+  "follower",
+  {
+    followerId: text("followerId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    followingId: text("followingId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    followedAt: timestamp("followedAt").defaultNow(),
+  },
+  (followers) => ({
+    compoundKey: primaryKey({
+      columns: [followers.followerId, followers.followingId],
+    }),
+  })
+);
+
+export const likes = pgTable(
+  "like",
+  {
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    photoId: text("photoId")
+      .notNull()
+      .references(() => photos.id, { onDelete: "cascade" }),
+    likedAt: timestamp("likedAt").defaultNow(),
+  },
+  (photoLikes) => ({
+    compoundKey: primaryKey({
+      columns: [photoLikes.userId, photoLikes.photoId],
+    }),
+  })
+);

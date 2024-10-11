@@ -28,8 +28,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const profile = await db
         .select()
         .from(profiles)
-        .where(eq(profiles.userId, user.id))
-        .limit(1);
+        .where(eq(profiles.userId, user.id));
 
       if (profile[0]?.username) {
         session.user.username = profile[0].username;
