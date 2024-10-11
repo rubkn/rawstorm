@@ -27,9 +27,6 @@ export default function UploadDialog() {
   const [open, setOpen] = useState(false);
   const [filesList, setFilesList] = useState<UploadFile[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState<{
-    [key: string]: boolean; // true = success, false = failed
-  }>({});
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -84,11 +81,6 @@ export default function UploadDialog() {
           throw new Error(`Failed to upload ${file.name}`);
         }
 
-        setUploadStatus((prevStatuses) => ({
-          ...prevStatuses,
-          [file.name]: true, // Mark the file as successfully uploaded
-        }));
-
         return { success: true };
       });
 
@@ -104,14 +96,6 @@ export default function UploadDialog() {
         const failedFileNames = failedFiles
           .map((file) => file.fileName)
           .join(", ");
-
-        // Update upload status for failed files
-        setUploadStatus((prevStatuses) =>
-          failedFiles.reduce(
-            (acc, file) => ({ ...acc, [file.fileName]: false }),
-            prevStatuses
-          )
-        );
 
         toast({
           title: "There was an error...",
