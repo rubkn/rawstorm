@@ -14,6 +14,18 @@ export default async function UserProfilePage({
   const profile = await findProfileByUsername(user);
   const photos = await findUserPhotos(session?.user.id as string);
 
+  if (!profile) {
+    return (
+      <main className="p-6">
+        <h1 className="text-3xl font-bold text-red-500">User not found.</h1>
+        <p className="text-lg">
+          The user @{user} does not exist. Please check the username or try
+          searching for someone else.
+        </p>
+      </main>
+    );
+  }
+
   return (
     <>
       <header>
