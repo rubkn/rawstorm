@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { profiles } from "@/db/schema";
+import { profiles, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function POST(request: NextRequest) {
@@ -25,12 +25,24 @@ export async function POST(request: NextRequest) {
         .set({ username: username })
         .where(eq(profiles.userId, userId));
 
+      await db
+        .update(users)
+        .set({ username: username })
+        .where(eq(users.id, userId));
+
       return NextResponse.json({ message: "Username updated successfully." });
-    } else {
+    }
+
+    if (existingProfile.length === 0) {
       await db.insert(profiles).values({
         userId: userId,
         username: username,
       });
+
+      await db
+        .update(users)
+        .set({ username: username })
+        .where(eq(users.id, userId));
 
       return NextResponse.json({ message: "Profile created successfully." });
     }

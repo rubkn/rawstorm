@@ -20,12 +20,14 @@ export const findUserByUsername = async (username: string) => {
 
 export const insertUserPhoto = async (
   userId: string,
+  username: string,
   photoId: string,
   s3Url: string
 ) => {
   await db.insert(photos).values({
     id: photoId,
     userId: userId,
+    username: username,
     s3Url: s3Url,
   });
 };

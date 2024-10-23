@@ -91,7 +91,7 @@ export const authenticators = pgTable(
 export const photos = pgTable("photo", {
   id: text("id").primaryKey(),
   userId: text("userId").references(() => users.id),
-  uploadedBy: text("username"),
+  username: text("username"),
   s3Url: text("s3Url"),
   createdAt: timestamp("createdAt").defaultNow(),
 });

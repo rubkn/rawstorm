@@ -32,10 +32,10 @@ export async function POST(req: NextRequest) {
     };
 
     const user = await findUserById(userId);
-    const username = user?.username;
+    const username = user?.username as string;
     const { s3Url, photoId } = await uploadToS3(fileData, username || userId);
 
-    await insertUserPhoto(userId, photoId, s3Url);
+    await insertUserPhoto(userId, username, photoId, s3Url);
 
     return NextResponse.json(
       { message: "Photo uploaded successfully.", s3Url },
