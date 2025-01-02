@@ -38,7 +38,6 @@ export async function uploadToS3(file: File, user: string) {
     photoId,
   };
 }
-
 export async function spotlightPhoto() {
   const bucket = process.env.S3_BUCKET_NAME;
 
@@ -52,7 +51,8 @@ export async function spotlightPhoto() {
     foldersList.CommonPrefixes?.map((folder) => folder.Prefix) || [];
 
   if (folders.length === 0) {
-    throw new Error("No folders found in the bucket.");
+    console.warn("No folders found in the bucket.");
+    return null;
   }
 
   const randomFolder = folders[Math.floor(Math.random() * folders.length)];
@@ -65,7 +65,8 @@ export async function spotlightPhoto() {
   const items = folderResponse.Contents?.map((content) => content.Key) || [];
 
   if (items.length === 0) {
-    throw new Error("No photos found in the selected folder.");
+    console.warn("No photos found in the selected folder.");
+    return null;
   }
 
   const randomItem = items[Math.floor(Math.random() * items.length)];
