@@ -6,8 +6,8 @@ export default function SpotlightPhoto({
   photoUrl,
   userId,
 }: {
-  photoUrl: string;
-  userId: string;
+  photoUrl?: string;
+  userId?: string;
 }) {
   return (
     <section className="relative hidden lg:block h-full">
@@ -15,7 +15,7 @@ export default function SpotlightPhoto({
         alt="test"
         width={2000}
         height={2000}
-        src={photoUrl}
+        src={photoUrl!}
         className="w-full h-full object-cover object-center"
       />
       <div className="absolute inset-0 bg-opacity-50 flex flex-col justify-end p-6">
