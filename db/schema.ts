@@ -1,14 +1,16 @@
 import {
   boolean,
   timestamp,
-  pgTable,
   text,
   primaryKey,
   integer,
+  pgTableCreator,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
 
-export const users = pgTable("user", {
+export const createTable = pgTableCreator((name) => `rawstorm_${name}`);
+
+export const users = createTable("user", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
@@ -21,7 +23,7 @@ export const users = pgTable("user", {
   createdAt: timestamp("createdAt").defaultNow(),
 });
 
-export const accounts = pgTable(
+export const accounts = createTable(
   "account",
   {
     userId: text("userId")
@@ -45,7 +47,7 @@ export const accounts = pgTable(
   })
 );
 
-export const sessions = pgTable("session", {
+export const sessions = createTable("session", {
   sessionToken: text("sessionToken").primaryKey(),
   userId: text("userId")
     .notNull()
@@ -53,7 +55,7 @@ export const sessions = pgTable("session", {
   expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
-export const verificationTokens = pgTable(
+export const verificationTokens = createTable(
   "verificationToken",
   {
     identifier: text("identifier").notNull(),
@@ -67,7 +69,7 @@ export const verificationTokens = pgTable(
   })
 );
 
-export const authenticators = pgTable(
+export const authenticators = createTable(
   "authenticator",
   {
     credentialID: text("credentialID").notNull().unique(),
@@ -88,7 +90,7 @@ export const authenticators = pgTable(
   })
 );
 
-export const photos = pgTable("photo", {
+export const photos = createTable("photo", {
   id: text("id").primaryKey(),
   userId: text("userId").references(() => users.id),
   username: text("username"),
@@ -96,7 +98,7 @@ export const photos = pgTable("photo", {
   createdAt: timestamp("createdAt").defaultNow(),
 });
 
-export const profiles = pgTable("profile", {
+export const profiles = createTable("profile", {
   userId: text("userId")
     .primaryKey()
     .references(() => users.id, {
@@ -114,7 +116,7 @@ export const profiles = pgTable("profile", {
     .$onUpdate(() => new Date()),
 });
 
-export const followers = pgTable(
+export const followers = createTable(
   "follower",
   {
     followerId: text("followerId")
@@ -132,7 +134,7 @@ export const followers = pgTable(
   })
 );
 
-export const likes = pgTable(
+export const likes = createTable(
   "like",
   {
     userId: text("userId")
